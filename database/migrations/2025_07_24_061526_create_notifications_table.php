@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
+            $table->uuid('product_id');
+            $table->string('title');
+            $table->text('description');
             $table->timestamps();
+
+            $table->foreignUuid('product-id')->references('id')->on('products');
         });
     }
 
