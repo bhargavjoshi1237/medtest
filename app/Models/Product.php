@@ -27,6 +27,12 @@ class Product extends Model
         'alert_quantity' => 'integer'
     ];
 
+
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
+
     protected static function boot()
     {
         parent::boot();

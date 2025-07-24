@@ -3,24 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Product;
+use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Repositories\OrderRepository;
+use App\Repositories\ProductRepository;
+
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+     
+    public function __construct(
+        public OrderRepository $orderRepository,
+        public CustomerRepository $customerRepository,
+        public ProductRepository $productRepository
+    ) {}
+
+
     public function index()
     {
-        //
+        return Inertia::render('Order/Index', [
+            'orders' => $this->orderRepository->getAll(),
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Order $order)
     {
-        //
+        return Inertia::render('Order/Create', [
+            'customers' => $this->customerRepository->getAll(),
+            'products' => $this->productRepository->getAll(),
+        ]);
     }
 
     /**
@@ -28,7 +44,8 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $order = $this->orderRepository->store($request->validated());
+        return redirect()->route('order.index')->with('success', 'Order created successfully!');
     }
 
     /**
@@ -36,8 +53,12 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return Inertia::render('Order/Show', [
+            'order' => $order,
+        ]);
     }
+
+     
 
     /**
      * Show the form for editing the specified resource.

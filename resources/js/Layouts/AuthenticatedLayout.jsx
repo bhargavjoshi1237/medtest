@@ -37,8 +37,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Billing
                                 </NavLink>
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('inventory')}
+                                    href={route('product.index')}
+                                    active={route().current('product.*')}
                                 >
                                     Inventory
                                 </NavLink>
