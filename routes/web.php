@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,6 @@ Route::middleware('auth')->group(function () {
 
  
 Route::resource('product', ProductController::class);
-
+Route::resource('customer', CustomerController::class);
 
 require __DIR__ . '/auth.php';

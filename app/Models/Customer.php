@@ -13,9 +13,7 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
-        'email',
-        'phone',
-        'address'
+        'contact',
     ];
 
     protected static function boot()
