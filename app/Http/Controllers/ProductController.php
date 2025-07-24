@@ -1,18 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use  Inertia\Inertia;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Repositories\ProductRepository;
+use App\Http\Requests\StoreProductRequest;
 
-class ProductController extends Controller
+
+class ProductController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function __construct(
+        public ProductRepository $productRepository,
+
+    ) {}
+
+
     public function index()
     {
-        //
+        return Inertia::render('Product/Index', [
+            'product' => $this->productRepository->getAll(),
+        ]);
     }
 
     /**
@@ -20,20 +29,17 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Product/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+  
+    public function store(StoreProductRequest $request)
     {
-        //
+        $product = $this->productRepository->store($request->validated());
+        return redirect()->route('product.index')->with('success', 'Product created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(Product $product)
     {
         //
