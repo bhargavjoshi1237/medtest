@@ -7,9 +7,9 @@ The Billing System is a management interface for handling billing operations wit
 ## Architecture
 
 ### Backend Architecture (Laravel)
-- **Models**: Uses existing Order, Customer, Product, Scheme, User, Notification models
-- **Controllers**: OrderController following Resource controller pattern
-- **Repositories**: OrderRepository extending BaseRepository (works with Order model)
+- **Models**: Uses existing Order, Customer, Product, Scheme, User, Notification models (all with UUID primary keys)
+- **Controllers**: OrderController (existing resource controller for billing operations)
+- **Repositories**: OrderRepository extending existing BaseRepository (works with Order model)
 - **Requests**: Form request classes for validation
 - **Services**: Business logic layer for billing calculations and operations
 
@@ -28,61 +28,67 @@ The Billing System is a management interface for handling billing operations wit
 
 ### Backend Components
 
-#### Existing Models Used
-- **Order**: Main entity for billing operations
-- **Customer**: Customer information for bills
-- **Product**: Product details via order-product pivot
-- **Scheme**: Discount calculations
-- **User**: Track who manages billing operations
-- **Notification**: Send billing-related notifications
+#### Existing Models Used (All with UUID Primary Keys)
+- **Order**: Main entity for billing operations (requires boot method and keyType = 'string')
+- **Customer**: Customer information for bills (requires boot method and keyType = 'string')
+- **Product**: Product details with inventory management (requires boot method and keyType = 'string')
+- **Scheme**: Discount calculations based on order count (requires boot method and keyType = 'string')
+- **User**: Track who created orders (requires boot method and keyType = 'string')
+- **Notification**: Send billing-related notifications (requires boot method and keyType = 'string')
 
-#### Repository Interface
+#### OrderRepository Interface
 ```php
-interface RepositoryInterface extends BaseRepositoryInterface
+interface OrderRepositoryInterface extends RepositoryInterface
 {
     public function getOrdersForBilling(array $filters = []): Collection;
-    public function calculateOrderTotal($orderId): array;
-    public function updateOrderStatus($orderId, string $status): bool;
-    public function getOrdersByCustomer($customerId): Collection;
+    public function calculateOrderTotal(string $orderId): array;
+    public function updateOrderStatus(string $orderId, string $status): bool;
+    public function getOrdersByCustomer(string $customerId): Collection;
     public function getOrdersByDateRange($start, $end): Collection;
     public function searchOrders(array $filters): Collection;
-    public function applySchemeDiscounts($customerId): array;
-    public function updateProductQuantity($productId, $quantity): bool;
-    public function checkInventoryAlerts($productId): void;
-    public function getCustomerOrderCount($customerId): int;
+    public function applySchemeDiscounts(string $customerId): array;
+    public function updateProductQuantity(string $productId, int $quantity): bool;
+    public function checkInventoryAlerts(string $productId): void;
+    public function getCustomerOrderCount(string $customerId): int;
 }
 
-class Repository extends BaseRepository implements RepositoryInterface
+class OrderRepository extends BaseRepository implements OrderRepositoryInterface
 {
-    protected $model = Order::class;
-    // Implementation using BaseRepository methods where applicable
-    // Works with existing Order, Customer, Product, Scheme, Notification models
+    // Uses existing BaseRepository methods
+    // Works with UUID-based Order, Customer, Product, Scheme, Notification models
     // Handles inventory management and discount calculations
 }
 ```
 
-#### Controller
+#### OrderController (Existing)
 ```php
-class Controller extends Controller
+class OrderController extends Controller
 {
-    // Resource controller methods working with orders as bills
+    // Existing resource controller methods enhanced for billing
     - index() // List orders as bills with filtering
-    - show() // Show order details as bill
-    - update() // Update order status for billing
+    - show(Order $order) // Show order details as bill (UUID route model binding)
+    - store(Request $request) // Create new order
+    - update(Request $request, Order $order) // Update order status for billing
+    - destroy(Order $order) // Cancel order
     - calculateTotal() // Calculate order totals with schemes
 }
 ```
 
 #### Request Classes
 ```php
-class FilterRequest extends FormRequest
+class OrderFilterRequest extends FormRequest
 {
-    // Validation for search/filter parameters
+    // Validation for search/filter parameters (UUID validation for IDs)
 }
 
-class UpdateStatusRequest extends FormRequest  
+class UpdateOrderStatusRequest extends FormRequest  
 {
-    // Validation for order status updates
+    // Validation for order status updates (UUID validation for order ID)
+}
+
+class StoreOrderRequest extends FormRequest
+{
+    // Validation for order creation (UUID validation for customer_id, product_ids)
 }
 ```
 
@@ -108,22 +114,24 @@ resources/js/Components/Bills/
 
 ## Data Models
 
-### Existing Tables Used
-- **orders**: Main table for billing data
-- **customers**: Customer information
-- **products**: Product details
-- **schemes**: Discount criteria
-- **users**: User management
-- **notifications**: Notification system
-- **order_products**: Pivot table linking orders to products
+### Existing Tables Used (All with UUID Primary Keys)
+- **orders**: Main table for billing data (id: UUID, customer_id: UUID, created_by: UUID)
+- **customers**: Customer information (id: UUID)
+- **products**: Product details with inventory (id: UUID, quantity: int, alert_quantity: int)
+- **schemes**: Discount criteria (id: UUID, order_count: int, discount: decimal)
+- **users**: User management (id: UUID)
+- **notifications**: Notification system (id: UUID, product_id: UUID)
+- **orders_products**: Pivot table linking orders to products (order_id: UUID, product_id: UUID, quantity: int)
 
-### Key Relationships (Existing)
-- **Order** belongsTo **User** (via created_by field - tracks who created the order)
-- **Order** belongsTo **Customer** (via customer_id field - shows whose order this is)
-- **Order** belongsToMany **Product** (via order_product pivot table with quantity field)
-- **Product** hasMany **Notification** (via product_id field - for low stock alerts)
-- **Scheme** applies to orders based on customer order count for discount calculations
-- **Notification** belongsTo **Product** (for inventory alerts when quantity below alert_quantity)
+### Key Relationships (UUID-based)
+- **Order** belongsTo **User** (via created_by UUID field - tracks who created the order)
+- **Order** belongsTo **Customer** (via customer_id UUID field - shows whose order this is)
+- **Order** belongsToMany **Product** (via orders_products pivot table with quantity field, using UUID keys)
+- **Product** hasMany **Notification** (via product_id UUID field - for low stock alerts)
+- **Scheme** applies to orders based on customer order count (order_count field) for discount calculations
+- **Notification** belongsTo **Product** (via product_id UUID field for inventory alerts when quantity below alert_quantity)
+- **Customer** hasMany **Order** (via customer_id UUID field)
+- **User** hasMany **Order** (via created_by UUID field)
 
 ## Error Handling
 
