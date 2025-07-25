@@ -11,8 +11,7 @@ class Scheme extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'name',
-        'description',
+        
         'order_count',
         'discount'
     ];

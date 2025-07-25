@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
-
+use App\Http\Controllers\SchemeController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('product', ProductController::class);
     Route::resource('order', OrderController::class);
     Route::resource('customer', CustomerController::class);
+    Route::resource('scheme', SchemeController::class);
 });
 
  
