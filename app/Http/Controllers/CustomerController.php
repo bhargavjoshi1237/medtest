@@ -40,10 +40,10 @@ class CustomerController extends BaseController
         try {
             $customer = $this->customerRepository->store($request->validated());
             DB::commit();
-            return redirect()->route('customer.index')->with('success', 'Customer created successfully.');
+            return $this->sendRedirectResponse(route('customer.index'), 'Customer created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('customer.index')->with('error', 'Failed to create customer.');
+            return $this->sendRedirectError(route('customer.index'), 'Failed to create customer.');
         }
     }
 
@@ -58,7 +58,7 @@ class CustomerController extends BaseController
 
     public function edit(Customer $customer)
     {
-        return Inertia::render('Customer/Create', [
+        return Inertia::render('Customer/Edit', [
             'customer' => $customer
         ]);
     }
@@ -71,10 +71,10 @@ class CustomerController extends BaseController
             $validated = $request->validated();
             $this->customerRepository->update($customer->id, $validated);
             DB::commit();
-            return redirect()->route('customer.index')->with('success', 'Customer updated successfully.');
+            return $this->sendRedirectResponse(route('customer.index'), 'Customer updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('customer.index')->with('error', 'Failed to update customer.');
+            return $this->sendRedirectError(route('customer.index'), 'Failed to update customer.');
         }
     }
 
@@ -85,10 +85,10 @@ class CustomerController extends BaseController
         try {
             $this->customerRepository->destroy($customer->id);
             DB::commit();
-            return redirect()->route('customer.index')->with('success', 'Customer deleted successfully.');
+            return $this->sendRedirectResponse(route('customer.index'), 'Customer deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('customer.index')->with('error', 'Failed to delete customer.');
+            return $this->sendRedirectError(route('customer.index'), 'Failed to delete customer.');
         }
     }
 }

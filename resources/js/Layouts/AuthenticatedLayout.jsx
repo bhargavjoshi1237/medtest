@@ -96,6 +96,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                         >
                                             Profile
                                         </Dropdown.Link>
+                                         <Dropdown.Link
+                                            href={route('scheme.index')}
+                                        >
+                                            Scheme
+                                        </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route('logout')}
                                             method="post"

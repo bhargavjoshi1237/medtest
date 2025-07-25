@@ -3,63 +3,83 @@
 namespace App\Http\Controllers;
 
 use App\Models\Scheme;
+use Inertia\Inertia;
+use App\Http\Requests\StoreSchemeRequest;
+use App\Http\Requests\UpdateSchemeRequest;
+use App\Repositories\SchemeRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Http\Controllers\BaseController;
 
-class SchemeController extends Controller
+class SchemeController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function __construct(public SchemeRepository $schemeRepository) {}
+
     public function index()
     {
-        //
+        $schemes = $this->schemeRepository->getAll();
+        return Inertia::render('Scheme/Index', [
+            'schemes' => $schemes
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return Inertia::render('Scheme/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreSchemeRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $this->schemeRepository->store($request->validated());
+            DB::commit();
+            return $this->sendRedirectResponse(route('scheme.index'), 'Scheme created successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendRedirectBackError('Failed to create scheme.');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Scheme $scheme)
     {
-        //
+        return Inertia::render('Scheme/Show', [
+            'scheme' => $scheme
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Scheme $scheme)
     {
-        //
+        return Inertia::render('Scheme/Edit', [
+            'scheme' => $scheme
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Scheme $scheme)
+    public function update(UpdateSchemeRequest $request, Scheme $scheme)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $scheme->update($request->validated());
+            DB::commit();
+            return $this->sendRedirectResponse(route('scheme.index'), 'Scheme updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendRedirectBackError('Failed to update scheme.');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Scheme $scheme)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $this->schemeRepository->destroy($scheme->id);
+            DB::commit();
+            return $this->sendRedirectResponse(route('scheme.index'), 'Scheme deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendRedirectBackError('Failed to delete scheme.');
+        }
     }
 }
+      
