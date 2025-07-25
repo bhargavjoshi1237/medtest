@@ -36,7 +36,7 @@ class Product extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (empty($model->{$model->getKeyName()})) {
                 $model->{$model->getKeyName()} = Str::uuid()->toString();
@@ -46,8 +46,9 @@ class Product extends Model
 
     public function orders(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class, 'orders_products')
-                    ->withTimestamps();
+        return $this->belongsToMany(Order::class, 'order_products')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     public function notifications(): HasMany

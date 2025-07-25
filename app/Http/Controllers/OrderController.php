@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrder;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
+use App\Models\Customer;
+
 use App\Models\Product;
 use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\SchemeRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +24,8 @@ class OrderController extends Controller
     public function __construct(
         public OrderRepository $orderRepository,
         public CustomerRepository $customerRepository,
-        public ProductRepository $productRepository
+        public ProductRepository $productRepository,
+        public SchemeRepository $schemeRepository
     ) {}
 
 
@@ -38,9 +42,13 @@ class OrderController extends Controller
      */
     public function create(Order $order)
     {
+        $customers = $this->customerRepository->getAll();
+        $schemes = $this->schemeRepository->getAll();
+        $products = $this->productRepository->getAll();
         return Inertia::render('Order/Create', [
-            'customers' => $this->customerRepository->getAll(),
-            'products' => $this->productRepository->getAll(),
+            'customers' => $customers,
+            'products' => $products,
+            'schemes' => $schemes,
         ]);
     }
 
@@ -53,6 +61,8 @@ class OrderController extends Controller
         try {
             $validated = $request->validated();
             $order = $this->orderRepository->store($validated);
+            $this->orderRepository->attachProducts($order, $validated);
+            $this->orderRepository->decrementProductInventory($validated);
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Order created successfully.');
         } catch (\Exception $e) {
@@ -66,8 +76,10 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        $order->load(['customer', 'products']);
         return Inertia::render('Order/Show', [
             'order' => $order,
+            'auth'  => ['user' => auth()->user()],
         ]);
     }
 

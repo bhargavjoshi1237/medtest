@@ -11,7 +11,7 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // <-- allow authenticated users
+        return true;  
     }
 
     /**
@@ -26,6 +26,9 @@ class StoreOrderRequest extends FormRequest
             'total_payable' => 'required|numeric|min:0',
             'discount' => 'required|integer|min:0',
             'final_amount' => 'required|numeric|min:0',
+            'products'    => 'required|array|min:1',
+            'products.*.id' => 'required|exists:products,id', // <-- changed from product_id to id
+            'products.*.quantity'   => 'required|integer|min:1',
         ];
     }
     public function validated($key = null, $default = null)

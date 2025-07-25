@@ -29,7 +29,7 @@ class Order extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (empty($model->{$model->getKeyName()})) {
                 $model->{$model->getKeyName()} = Str::uuid()->toString();
@@ -39,7 +39,7 @@ class Order extends Model
 
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     public function createdBy(): BelongsTo
@@ -47,15 +47,10 @@ class Order extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->createdBy();
-    }
-
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'orders_products')
-                    ->withPivot('quantity')
-                    ->withTimestamps();
+        return $this->belongsToMany(Product::class, 'order_products')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }

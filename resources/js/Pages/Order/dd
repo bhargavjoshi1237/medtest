@@ -1,0 +1,52 @@
+import React from 'react';
+import { Head } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+
+export default function Show({ auth, order }) {
+    const user = auth && auth.user ? auth.user : {};
+
+    return (
+        <AuthenticatedLayout
+            user={user}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Order Details</h2>}
+        >
+            <Head title="Order Details" />
+            <div className="py-12">
+                <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-bold mb-2">Order #{order.id}</h3>
+                            <div>Customer: {order.customer?.name}</div>
+                            <div>Total Payable: ${order.total_payable}</div>
+                            <div>Discount: ${order.discount}</div>
+                            <div>Final Amount: ${order.final_amount}</div>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold mb-2">Products</h4>
+                            <table className="min-w-full divide-y divide-gray-200 border">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {order.products?.map((product, idx) => (
+                                        <tr key={idx}>
+                                            <td className="px-4 py-2">{product.name}</td>
+                                            <td className="px-4 py-2">${product.price}</td>
+                                            <td className="px-4 py-2">{product.pivot?.quantity}</td>
+                                            <td className="px-4 py-2">${(product.price * (product.pivot?.quantity || 0)).toFixed(2)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
+}

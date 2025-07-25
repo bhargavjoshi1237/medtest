@@ -3,12 +3,13 @@ import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Form from './Components/Form';
 
-export default function Create({ auth, customers, products }) {
+export default function Create({ auth, customers, products, schemes }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Create Order</h2>}
         >
+            <p>{JSON.stringify(schemes)}</p>
             <Head title="Create Order" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

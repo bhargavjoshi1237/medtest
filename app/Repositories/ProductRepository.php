@@ -6,9 +6,9 @@ use App\Models\Product;
 
 class ProductRepository extends BaseRepository
 {
-    public function __construct()
+    public function __construct(Product $model)
     {
-        parent::__construct(new Product());
+        parent::__construct($model);
     }
 
     

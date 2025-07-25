@@ -96,7 +96,10 @@ export default function Form({
             total_payable: data.total_payable,
             discount: data.discount,
             final_amount: data.final_amount,
-            products: data.products.map(p => ({ id: p.id, quantity: p.quantity }))
+            products: data.products.map(p => ({
+                product_id: p.id, // <-- send as product_id
+                quantity: p.quantity
+            }))
         };
         if (method === 'put') {
             put(submitRoute, {
