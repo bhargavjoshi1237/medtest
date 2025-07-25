@@ -55,8 +55,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Orders
                                 </NavLink>
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('notification')}
+                                    href={route('notification.index')}
+                                    active={route().current('notification.index')}
                                 >
                                     Notifications
                                 </NavLink>
