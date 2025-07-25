@@ -42,8 +42,18 @@ class OrderRepository extends BaseRepository
             if (!isset($product['id']) || !isset($product['quantity'])) {
                 continue;
             }
-            Product::where('id', $product['id'])
-                ->decrement('quantity', $product['quantity']);
+            $productModel = Product::find($product['id']);
+            if ($productModel) {
+                $productModel->decrement('quantity', $product['quantity']);
+                $productModel->refresh();
+                if ($productModel->quantity < $productModel->alert_quantity) {
+                    \App\Models\Notification::create([
+                        'product_id' => $productModel->id,
+                        'title' => 'Low Stock Alert',
+                        'description' => "Product '{$productModel->name}' is below alert quantity ({$productModel->quantity} left).",
+                    ]);
+                }
+            }
         }
     }
 }

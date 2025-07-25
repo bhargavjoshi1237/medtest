@@ -13,9 +13,8 @@ class Notification extends Model
 
     protected $fillable = [
         'product_id',
-        'type',
-        'message',
-        'is_read'
+        'title',
+        'description'
     ];
 
     protected $casts = [
@@ -38,3 +37,4 @@ class Notification extends Model
         return $this->belongsTo(Product::class);
     }
 }
+ 

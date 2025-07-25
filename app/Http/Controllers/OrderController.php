@@ -42,9 +42,10 @@ class OrderController extends Controller
      */
     public function create(Order $order)
     {
-        $customers = $this->customerRepository->getAll();
-        $schemes = $this->schemeRepository->getAll();
+        $customers = $this->customerRepository->withOrderCount();
         $products = $this->productRepository->getAll();
+        $schemes = $this->schemeRepository->getAll();
+
         return Inertia::render('Order/Create', [
             'customers' => $customers,
             'products' => $products,
@@ -130,3 +131,4 @@ class OrderController extends Controller
         }
     }
 }
+   

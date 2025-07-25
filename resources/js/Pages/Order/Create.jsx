@@ -9,7 +9,6 @@ export default function Create({ auth, customers, products, schemes }) {
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Create Order</h2>}
         >
-            <p>{JSON.stringify(schemes)}</p>
             <Head title="Create Order" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -18,6 +17,7 @@ export default function Create({ auth, customers, products, schemes }) {
                             <Form
                                 customers={customers}
                                 products={products}
+                                schemes={schemes}
                                 submitRoute={route('order.store')}
                                 method="post"
                                 onSuccess={() => {
@@ -31,4 +31,3 @@ export default function Create({ auth, customers, products, schemes }) {
         </AuthenticatedLayout>
     );
 }
-                 

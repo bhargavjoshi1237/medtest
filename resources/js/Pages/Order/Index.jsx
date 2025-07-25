@@ -6,7 +6,17 @@ const Index = ({ orders, auth }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Orders</h2>}
+            header={
+                <div className="flex items-center justify-between gap-4">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">Orders</h2>
+                    <a
+                        href="/order/create"
+                        className="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium rounded-md shadow hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                    >
+                         Create Order
+                    </a>
+                </div>
+            }
         >
             <Head title="Orders" />
             

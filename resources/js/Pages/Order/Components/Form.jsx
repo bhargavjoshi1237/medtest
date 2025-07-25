@@ -5,9 +5,10 @@ export default function Form({
     order = null,
     customers,
     products,
+    schemes,
     submitRoute,
     method,
-    onSuccess = () => {},
+    onSuccess = () => { },
 }) {
     const initialProducts = order && Array.isArray(order.products)
         ? order.products.map(p => ({
@@ -71,19 +72,44 @@ export default function Form({
         }, 0);
     };
 
+    const getDiscountForOrderCount = (orderCount) => {
+        if (!schemes || schemes.length === 0) return 0;
+        const applicable = schemes
+            .filter(s => orderCount >= s.order_count)
+            .sort((a, b) => b.order_count - a.order_count)[0];
+        return applicable ? parseFloat(applicable.discount) : 0;
+    };
+
+    useEffect(() => {
+        const customer = customers.find(c => c.id === data.customer_id);
+        const orderCount = customer ? customer.order_count : 0;
+        const discountPercent = getDiscountForOrderCount(orderCount);
+        setData(current => ({
+            ...current,
+            discount: discountPercent,
+        }));
+    }, [data.customer_id, customers, schemes]);
+
     useEffect(() => {
         const total = calculateTotal();
-        const discount = parseFloat(data.discount) || 0;
-        const final = total - discount;
+        const discountPercent = parseFloat(data.discount) || 0;
+        const discountAmount = total * (discountPercent / 100);
+        const final = total - discountAmount;
         setData(current => {
             const totalStr = total.toFixed(2);
+            const discountStr = discountAmount.toFixed(2);
             const finalStr = final.toFixed(2);
-            if (current.total_payable === totalStr && current.final_amount === finalStr) {
+            if (
+                current.total_payable === totalStr &&
+                current.final_amount === finalStr &&
+                current.discount_amount === discountStr
+            ) {
                 return current;
             }
             return {
                 ...current,
                 total_payable: totalStr,
+                discount_amount: discountStr,
                 final_amount: finalStr,
             };
         });
@@ -97,7 +123,7 @@ export default function Form({
             discount: data.discount,
             final_amount: data.final_amount,
             products: data.products.map(p => ({
-                product_id: p.id, // <-- send as product_id
+                product_id: p.id,
                 quantity: p.quantity
             }))
         };
@@ -121,6 +147,8 @@ export default function Form({
     const totalPayableValue = isUpdate ? order.total_payable : data.total_payable;
     const discountValue = isUpdate ? order.discount : data.discount;
     const finalAmountValue = isUpdate ? order.final_amount : data.final_amount;
+    const discountPercentValue = isUpdate ? order.discount : data.discount;
+    const discountAmountValue = data.discount_amount || "0.00";
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -147,6 +175,13 @@ export default function Form({
                         </option>
                     ))}
                 </select>
+                {data.customer_id && (
+                    <div className="mt-2 px-4 py-2 rounded bg-green-100 text-green-800 text-sm font-semibold flex items-center gap-2">
+                        <span role="img" aria-label="confetti">🎉</span>
+                        Congratulations! This customer has {customers.find(c => c.id === data.customer_id)?.order_count ?? 0} orders.
+                        They will get a {discountPercentValue}% discount automatically applied!
+                    </div>
+                )}
             </div>
 
             {!isUpdate && (
@@ -254,19 +289,19 @@ export default function Form({
 
             <div>
                 <label htmlFor="discount" className="block text-sm font-medium text-gray-700 mb-1">
-                    Discount
+                    Discount (%)
                 </label>
                 <input
                     id="discount"
                     name="discount"
-                    type="number"
-                    min="0"
-                    value={discountValue}
-                    onChange={e => !isUpdate && setData('discount', e.target.value)}
-                    required
-                    className="w-full rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black disabled:opacity-50"
-                    disabled={isUpdate}
+                    type="text"
+                    value={discountPercentValue}
+                    readOnly
+                    className="w-full rounded-md border border-gray-300 py-2 px-3 text-sm bg-gray-50"
                 />
+                <div className="text-xs text-gray-500 mt-1">
+                    Discount Amount: ${discountAmountValue}
+                </div>
             </div>
 
             <div>

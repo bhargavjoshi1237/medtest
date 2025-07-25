@@ -71,7 +71,7 @@ export default function Show({ auth, order }) {
                                 </div>
                                 <div className="p-4 bg-gray-50 rounded-lg">
                                     <p className="text-sm text-gray-500">Discount</p>
-                                    <p className="text-xl font-semibold text-gray-900">-${order.discount}</p>
+                                    <p className="text-xl font-semibold text-gray-900 ml-1"> {order.discount}%</p>
                                 </div>
                                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                                     <p className="text-sm text-blue-600">Final Amount</p>
