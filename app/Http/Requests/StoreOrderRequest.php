@@ -4,9 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreOrder extends FormRequest
+class StoreOrderRequest extends FormRequest
 {
-    /**
+    /** 
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
@@ -26,9 +26,12 @@ class StoreOrder extends FormRequest
             'total_payable' => 'required|numeric|min:0',
             'discount' => 'required|integer|min:0',
             'final_amount' => 'required|numeric|min:0',
-            'products' => 'required|array|min:1',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
         ];
+    }
+    public function validated($key = null, $default = null)
+    {
+        $data = parent::validated($key, $default);
+        $data['created_by'] = auth()->id();
+        return $data;
     }
 }

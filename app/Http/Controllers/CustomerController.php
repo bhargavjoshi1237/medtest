@@ -9,9 +9,11 @@ use Inertia\Inertia;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCutomerRequest;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\BaseController;
 
 
-class CustomerController extends Controller
+
+class CustomerController extends BaseController
 {
 
     public function __construct(

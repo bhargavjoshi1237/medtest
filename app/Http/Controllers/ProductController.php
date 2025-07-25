@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Repositories\ProductRepository;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\DB;
 
 

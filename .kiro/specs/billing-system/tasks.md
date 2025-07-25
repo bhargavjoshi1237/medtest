@@ -21,7 +21,7 @@
   - Write unit tests for calculation logic
   - _Requirements: 1.2, 1.4_
 
-- [ ] 4. Create form request validation classes with UUID support
+- [x] 4. Create form request validation classes with UUID support
   - Implement OrderFilterRequest for filtering and search parameters with UUID validation
   - Create UpdateOrderStatusRequest for order status updates with UUID validation
   - Add StoreOrderRequest for order creation with UUID validation for customer_id and product_ids

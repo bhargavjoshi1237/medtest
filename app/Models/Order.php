@@ -15,15 +15,14 @@ class Order extends Model
     protected $fillable = [
         'customer_id',
         'created_by',
-        'status',
-        'total_amount',
-        'discount_amount',
+        'total_payable',
+        'discount',
         'final_amount'
     ];
 
     protected $casts = [
-        'total_amount' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
+        'total_payable' => 'decimal:2',
+        'discount' => 'integer',
         'final_amount' => 'decimal:2'
     ];
 
@@ -48,9 +47,15 @@ class Order extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->createdBy();
+    }
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'orders_products')
+                    ->withPivot('quantity')
                     ->withTimestamps();
     }
 }
