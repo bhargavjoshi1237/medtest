@@ -3,61 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use App\Repositories\NotificationRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class NotificationController extends Controller
+class NotificationController extends BaseController
 {
+    public function __construct( public NotificationRepository $notificationRepository)
+    {
+    }
     
     public function index()
     {
-        //
+        $notifications = $this->notificationRepository->getAll(['product:id,name']);
+        return inertia('Notification/Index', [
+            'notifications' => $notifications
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Notification $notification)
     {
-        //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Notification $notification)
     {
-        //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Notification $notification)
     {
-        //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Notification $notification)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $this->notificationRepository->destroy($notification->id);
+            DB::commit();
+            return $this->sendRedirectResponse(route('notification.index'), 'Notification deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendRedirectError(route('notification.index'), 'Failed to delete notification.');
+        }
     }
 }

@@ -10,6 +10,5 @@ class NotificationRepository extends BaseRepository
     {
         parent::__construct($model);
     }
-
-    
 }
+   
