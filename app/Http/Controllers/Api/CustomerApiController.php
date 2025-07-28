@@ -6,35 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Repositories\Api\CustomerApiRepository;
 use Illuminate\Http\Request;
-use App\Http\Requests\Api\StoreCustomerApiRequest; // import the request
+use App\Http\Requests\Api\CustomerApiRequest; // Fixed import
 use Illuminate\Support\Facades\Log;
 
 class CustomerApiController extends Controller
 {
-    
-
-    public function __construct(public CustomerApiRepository $customerRepository)
-    {
-        
-    }   
-    
-       
-    
+    public function __construct(
+        public CustomerApiRepository $customerRepository
+    ) {}   
 
     public function index()
     {
         $customers = $this->customerRepository->getAll();
-
         return response()->json($customers);
     }
 
-    public function store(StoreCustomerApiRequest $request)
+    public function store(CustomerApiRequest $request)
     {
-        $validated = $request->validated();
-        Log::info('Validated customer data:', $validated);
-        $customer = $this->customerRepository->store($validated);
-
-        return response()->json($customer, 201);
+        try {
+            $customer = $this->customerRepository->store($request->validated());
+            return response()->json($customer, 201);
+        } catch (\Exception $e) {
+            Log::error('Failed to create customer: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create customer'], 500);
+        }
     }
 }
+            
 

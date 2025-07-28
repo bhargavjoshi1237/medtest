@@ -15,8 +15,7 @@ class StoreCustomerApiRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'contact' => 'required|string|size:12|unique:customers,contact',
-            
+            'contact' => 'required|string|size:12|unique:customers,contact'
         ];
     }
 }
