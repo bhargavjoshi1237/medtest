@@ -2,73 +2,114 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function View({ customer }) {
+export default function View({ customer, auth, orders }) {
     return (
-       <AuthenticatedLayout>
-         <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <AuthenticatedLayout>
+            <div className="max-w-3xl mx-auto px-4 py-8">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center space-x-3">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-white"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                    clipRule="evenodd"
-                                />
+                        <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <h2 className="text-lg font-semibold text-gray-900">Customer Details</h2>
+                        <h1 className="text-xl font-medium text-gray-900">Customer Profile</h1>
                     </div>
-                    <Link
+                    <Link 
                         href={route('customer.index')}
-                        className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                        className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
                     >
-                        Back to list
+                        ← All Customers
                     </Link>
                 </div>
 
-                <div className="px-6 py-5 space-y-6">
-                    <div className="space-y-1">
-                        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Name</h3>
-                        <p className="text-lg font-medium text-gray-900">{customer.name}</p>
+                {/* Customer Card */}
+                <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Name</h2>
+                            <p className="text-base font-normal text-gray-900">{customer.name}</p>
+                        </div>
+                        <div>
+                            <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Contact</h2>
+                            <p className="text-base font-normal text-gray-900">{customer.contact}</p>
+                        </div>
                     </div>
 
-                    <div className="space-y-1">
-                        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</h3>
-                        <p className="text-lg font-medium text-gray-900">{customer.contact}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-4">
+                    <div className="flex space-x-3">
                         <Link
                             href={route('customer.edit', customer.id)}
-                            className="inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            className="px-3 py-1.5 text-sm font-medium rounded border border-gray-200 hover:border-gray-300 transition-colors"
                         >
-                            Edit Customer
+                            Edit
                         </Link>
                         <button
-                            onClick={() => {
-                                if (confirm('Are you sure you want to delete this customer?')) {
-                                    router.delete(route('customer.destroy', customer.id));
-                                }
-                            }}
-                            className="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            onClick={() => confirm('Delete this customer?') && router.delete(route('customer.destroy', customer.id))}
+                            className="px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
                         >
-                            Delete Customer
+                            Delete
                         </button>
                     </div>
                 </div>
 
-                <div className="px-6 py-4 border-t border-gray-200 text-sm text-gray-500">
-                    <p>Created on {new Date(customer.created_at).toLocaleDateString()}</p>
+                {/* Orders Section */}
+                <div className="space-y-3">
+                    <h2 className="text-lg font-medium text-gray-900 mb-2">Orders</h2>
+                    
+                    {orders.length > 0 ? (
+                        <div className="space-y-2">
+                            {orders.map(order => (
+                                <div key={order.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="font-medium text-gray-900">Order #{order.id}</p>
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                {new Date(order.created_at).toLocaleDateString('en-US', {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric'
+                                                })}
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-medium text-gray-900">${order.final_amount}</p>
+                                            {order.discount > 0 && (
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    Saved ${order.discount}
+                                                </p>
+                                            )}
+                                            <Link
+                                                href={`/order/${order.id}`}
+                                                className="inline-block mt-2 px-3 py-1 text-xs font-medium rounded border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors"
+                                            >
+                                                View Order
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <h3 className="mt-3 text-sm font-medium text-gray-900">No orders yet</h3>
+                            <p className="mt-1 text-sm text-gray-500">This customer hasn't placed any orders.</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Metadata */}
+                <div className="mt-6 text-xs text-gray-500 text-center">
+                    Customer since {new Date(customer.created_at).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    })}
                 </div>
             </div>
-        </div>
-       </AuthenticatedLayout>
+        </AuthenticatedLayout>
     );
 }

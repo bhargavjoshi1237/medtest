@@ -22,4 +22,10 @@ class CustomerRepository extends BaseRepository
                 return $customer;
             });
     }
+    
+    public function getOrders($customerId)
+    {
+        $customer = $this->getById($customerId, ['orders']);
+        return $customer ? $customer->orders : collect();
+    }
 }
