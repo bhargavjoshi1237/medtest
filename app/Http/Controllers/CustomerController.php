@@ -50,7 +50,9 @@ class CustomerController extends BaseController
     
     public function show(Customer $customer)
     {
+        $orders = $this->customerRepository->getOrders($customer->id);
         return Inertia::render('Customer/View', [
+            'orders' => $orders,
             'customer' => $customer
         ]);
     }

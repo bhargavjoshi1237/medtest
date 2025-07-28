@@ -29,6 +29,7 @@ export default function Form({
 
     const [selectedProduct, setSelectedProduct] = useState('');
     const [quantity, setQuantity] = useState(1);
+    const [manualDiscount, setManualDiscount] = useState(false);
 
     const addProduct = () => {
         if (!selectedProduct || quantity < 1) return;
@@ -81,13 +82,21 @@ export default function Form({
     };
 
     useEffect(() => {
+        setManualDiscount(!!data._manualDiscount);
+    }, [data._manualDiscount]);
+
+    useEffect(() => {
         const customer = customers.find(c => c.id === data.customer_id);
         const orderCount = customer ? customer.order_count : 0;
         const discountPercent = getDiscountForOrderCount(orderCount);
-        setData(current => ({
-            ...current,
-            discount: discountPercent,
-        }));
+        // Only auto-set discount if user hasn't manually changed it
+        setData(current => {
+            if (current._manualDiscount) return current;
+            return {
+                ...current,
+                discount: discountPercent,
+            };
+        });
     }, [data.customer_id, customers, schemes]);
 
     useEffect(() => {
@@ -291,14 +300,39 @@ export default function Form({
                 <label htmlFor="discount" className="block text-sm font-medium text-gray-700 mb-1">
                     Discount (%)
                 </label>
-                <input
-                    id="discount"
-                    name="discount"
-                    type="text"
-                    value={discountPercentValue}
-                    readOnly
-                    className="w-full rounded-md border border-gray-300 py-2 px-3 text-sm bg-gray-50"
-                />
+                <div className="flex gap-2">
+                    <input
+                        id="discount"
+                        name="discount"
+                        type="number"
+                        min="0"
+                        value={discountPercentValue}
+                        readOnly={!manualDiscount}
+                        onChange={e => {
+                            setData(current => ({
+                                ...current,
+                                discount: e.target.value,
+                                _manualDiscount: true,
+                            }));
+                        }}
+                        className={`w-full rounded-md border border-gray-300 py-2 px-3 text-sm ${manualDiscount ? 'bg-white' : 'bg-gray-50'}`}
+                    />
+                    {!manualDiscount && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setManualDiscount(true);
+                                setData(current => ({
+                                    ...current,
+                                    _manualDiscount: true,
+                                }));
+                            }}
+                           className="inline-flex items-center rounded-md border border-transparent bg-black px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        >
+                            Override Discount
+                        </button>
+                    )}
+                </div>
                 <div className="text-xs text-gray-500 mt-1">
                     Discount Amount: ${discountAmountValue}
                 </div>
@@ -327,7 +361,6 @@ export default function Form({
                         !customerValue ||
                         data.products.length === 0 ||
                         !totalPayableValue ||
-                        !discountValue ||
                         !finalAmountValue
                     }
                     className="w-full inline-flex justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50"

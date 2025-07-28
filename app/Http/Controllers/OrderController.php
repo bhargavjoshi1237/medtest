@@ -68,7 +68,6 @@ class OrderController extends Controller
             return redirect()->route('dashboard')->with('success', 'Order created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            
             return redirect()->back()->with('error', 'Failed to create order: ' . $e->getMessage());
         }
     }
