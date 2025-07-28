@@ -68,11 +68,7 @@ class OrderController extends Controller
             return redirect()->route('dashboard')->with('success', 'Order created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Order creation failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'validated' => $validated ?? null,
-            ]);
+            
             return redirect()->back()->with('error', 'Failed to create order: ' . $e->getMessage());
         }
     }
@@ -85,7 +81,7 @@ class OrderController extends Controller
         $order->load(['customer', 'products']);
         return Inertia::render('Order/Show', [
             'order' => $order,
-            'auth'  => ['user' => auth()->user()],
+            'auth'  => ['user' => Auth::user()],
         ]);
     }
 
