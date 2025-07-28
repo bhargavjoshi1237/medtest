@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Notification;
 use App\Models\Discount;
+use Exception;
 
 class OrderRepository extends BaseRepository
 {

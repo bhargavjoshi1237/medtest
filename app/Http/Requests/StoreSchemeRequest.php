@@ -14,7 +14,7 @@ class StoreSchemeRequest extends FormRequest
     public function rules()
     {
         return [
-            'order_count' => 'required|integer|min:1',
+            'order_count' => 'required|integer|min:0',
             'discount' => 'required|integer|min:0|max:100',
         ];
     }

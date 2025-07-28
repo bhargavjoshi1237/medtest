@@ -92,7 +92,7 @@ class OrderController extends Controller
         $order->load(['customer', 'products']);
         return Inertia::render('Order/Show', [
             'order' => $order,
-            'auth'  => ['user' => auth()->user()],
+            'auth'  => ['user' => Auth::user()],
         ]);
     }
 
