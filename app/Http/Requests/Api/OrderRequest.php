@@ -22,7 +22,7 @@ class OrderRequest extends FormRequest
         return [
             'maxamt' => ['nullable', 'numeric', 'gt:0'], 
             'maxqty' => ['nullable', 'numeric', 'gt:0'], 
-            'customer_uuid' => ['nullable', 'uuid'], 
+            'customerid' => ['nullable', 'uuid'], 
         ];
     }
 
