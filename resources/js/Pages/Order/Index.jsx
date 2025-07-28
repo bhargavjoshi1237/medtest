@@ -93,7 +93,7 @@ const Index = ({ orders, auth }) => {
                                                     ${order.total_payable}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    ${order.discount}
+                                                    {order.discount}%
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className="px-2 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
