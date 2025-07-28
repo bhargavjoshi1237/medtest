@@ -7,6 +7,7 @@ use App\Repositories\BaseRepository;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Notification;
+use Exception;
 
 class OrderRepository extends BaseRepository
 {
