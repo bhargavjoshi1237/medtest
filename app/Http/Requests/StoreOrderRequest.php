@@ -29,6 +29,7 @@ class StoreOrderRequest extends FormRequest
             'products'    => 'required|array|min:1',
             'products.*.id' => 'required|exists:products,id', // <-- changed from product_id to id
             'products.*.quantity'   => 'required|integer|min:1',
+            
         ];
     }
     public function validated($key = null, $default = null)

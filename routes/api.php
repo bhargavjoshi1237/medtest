@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\OrdertController;
 use App\Http\Controllers\Api\OrderController; // Import the OrderController
 
-// Example: Get authenticated user
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -14,6 +13,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/products', [ProductApiController::class, 'index'])
     ->name('api.products.index');
 
+Route::post('/products', [ProductApiController::class, 'store'])
+    ->name('api.products.store');
 
-// Public route to get all orders
+Route::delete('/products/{id}', [ProductApiController::class, 'destroy'])
+    ->name('api.products.destroy');
+
 Route::get('/orders', [OrderController::class, 'index']);

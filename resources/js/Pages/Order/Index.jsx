@@ -1,8 +1,24 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Head } from '@inertiajs/react';
 
 const Index = ({ orders, auth }) => {
+    const [search, setSearch] = useState('');
+
+    const filteredOrders = useMemo(() => {
+        if (!search.trim()) return orders;
+        const lower = search.toLowerCase();
+        return orders.filter(order => {
+            return (
+                order.customer.name.toLowerCase().includes(lower) ||
+                (order.customer.contact && order.customer.contact.toLowerCase().includes(lower)) ||
+                String(order.total_payable).includes(lower) ||
+                String(order.discount).includes(lower) ||
+                String(order.final_amount).includes(lower)
+            );
+        });
+    }, [orders, search]);
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -29,7 +45,7 @@ const Index = ({ orders, auth }) => {
                                 <div>
                                     <h1 className="text-2xl font-bold text-gray-900">Order History</h1>
                                     <p className="mt-1 text-sm text-gray-500">
-                                        {orders.length} orders found
+                                        {filteredOrders.length} orders found
                                     </p>
                                 </div>
                                 <div className="relative w-full sm:w-64">
@@ -52,6 +68,8 @@ const Index = ({ orders, auth }) => {
                                     <input
                                         type="text"
                                         placeholder="Search orders..."
+                                        value={search}
+                                        onChange={e => setSearch(e.target.value)}
                                         className="block w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                                     />
                                 </div>
@@ -83,7 +101,7 @@ const Index = ({ orders, auth }) => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {orders.map((order) => (
+                                        {filteredOrders.map((order) => (
                                             <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm font-medium text-gray-900">{order.customer.name}</div>

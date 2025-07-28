@@ -40,7 +40,7 @@ class CustomerController extends BaseController
         try {
             $customer = $this->customerRepository->store($request->validated());
             DB::commit();
-            return $this->sendRedirectResponse(route('customer.index'), 'Customer created successfully.');
+            return $this->sendRedirectResponse(route('customer.show', $customer->id), 'Customer created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendRedirectError(route('customer.index'), 'Failed to create customer.');

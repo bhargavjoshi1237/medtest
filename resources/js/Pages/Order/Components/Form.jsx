@@ -181,20 +181,30 @@ export default function Form({
                 <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">
                     Customer
                 </label>
-                <select
-                    id="customer"
-                    value={customerValue}
-                    onChange={e => setData('customer_id', e.target.value)}
-                    className="w-full rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black disabled:opacity-50"
-                    disabled={isUpdate}
-                >
-                    <option value="">Select a customer</option>
-                    {customers.map((customer) => (
-                        <option key={customer.id} value={customer.id}>
-                            {customer.name}
-                        </option>
-                    ))}
-                </select>
+                <div className="flex items-center gap-2">
+                    <select
+                        id="customer"
+                        value={customerValue}
+                        onChange={e => setData('customer_id', e.target.value)}
+                        className="w-full rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black disabled:opacity-50"
+                        disabled={isUpdate}
+                    >
+                        <option value="">Select a customer</option>
+                        {customers.map((customer) => (
+                            <option key={customer.id} value={customer.id}>
+                                {customer.name}
+                            </option>
+                        ))}
+                    </select>
+                    <a
+                        href="/customer/create"
+                        className="inline-flex text-center items-center rounded-md border border-transparent bg-black px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                        rel="noopener noreferrer"
+                        title="new customer"
+                    >
+                         Add
+                    </a>
+                </div>
                 {data.customer_id && (() => {
                     const discountObj = discounts?.find(d => d.customer_id === data.customer_id);
                     if (discountObj) {

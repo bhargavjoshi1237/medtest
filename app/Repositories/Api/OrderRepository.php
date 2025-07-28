@@ -23,8 +23,8 @@ class OrderRepository extends BaseRepository
         if (isset($params['customer_id']) && $params['customer_id'] !== null) {
             $query->where('customer_id', $params['customer_id']);
         }
-        if (isset($params['maxQty']) && $params['maxQty'] !== null) {
-            $query->limit($params['maxQty']);
+        if (isset($params['maxqty']) && $params['maxqty'] !== null) {
+            $query->limit($params['maxqty']);
         }
 
         return $query->get();

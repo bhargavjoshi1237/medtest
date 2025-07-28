@@ -50,6 +50,12 @@ export default function View({ customer, auth, orders }) {
                         >
                             Delete
                         </button>
+                             <Link
+                            href={route('order.create')}
+                            className="px-3 py-1.5 text-sm font-medium rounded border border-gray-200 hover:border-gray-300 transition-colors"
+                        >
+                            Create Order
+                        </Link>
                     </div>
                 </div>
 

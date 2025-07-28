@@ -21,7 +21,7 @@ use App\Repositories\DiscountRepository;
 use Illuminate\Support\Facades\DB;
 
 
-class OrderController extends Controller
+class OrderController extends BaseController
 {
 
     public function __construct(
@@ -75,7 +75,6 @@ class OrderController extends Controller
             $this->orderRepository->attachProducts($order, $validated);
             $this->orderRepository->decrementProductInventory($validated);
             $this->orderRepository->removeCustomerDiscount($order->customer);
-
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Order created successfully.');
         } catch (\Exception $e) {
