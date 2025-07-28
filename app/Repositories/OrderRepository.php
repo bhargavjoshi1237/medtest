@@ -7,6 +7,7 @@ use App\Repositories\BaseRepository;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Notification;
+use App\Models\Discount;
 
 class OrderRepository extends BaseRepository
 {
@@ -60,5 +61,10 @@ class OrderRepository extends BaseRepository
             } else {
             }
         }
+    }
+
+    public function removeCustomerDiscount($customer)
+    {
+        Discount::where('customer_id', $customer->id)->delete();
     }
 }

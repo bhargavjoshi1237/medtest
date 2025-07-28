@@ -3,22 +3,24 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ProductRequest;
-use App\Repositories\Api\ProductRepository;
+use App\Http\Controllers\BaseController;
+use App\Http\Requests\Api\ProductApiRequest;
+use App\Repositories\Api\ProductApiRepository;
+use Faker\Provider\Base;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class ProductApiController extends BaseController
 {
     public function __construct(
-        public ProductRepository $productRepository,
+        public ProductApiRepository $productRepository,
     ) {}
 
-    public function index(ProductRequest $request)
+    public function index(ProductApiRequest $request)
     {
         $params = $request->validated();
         $response = $this->productRepository->getWithParams($params);
     
-        return response()->json([
+        return response()->json([   
             'message' => 'Hello, World!',
             'params' => $params,
             'products' => $response,

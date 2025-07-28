@@ -7,6 +7,7 @@ export default function Form({
     products,
     schemes,
     submitRoute,
+    discounts,
     method,
     onSuccess = () => { },
 }) {
@@ -87,17 +88,27 @@ export default function Form({
 
     useEffect(() => {
         const customer = customers.find(c => c.id === data.customer_id);
-        const orderCount = customer ? customer.order_count : 0;
-        const discountPercent = getDiscountForOrderCount(orderCount);
-        // Only auto-set discount if user hasn't manually changed it
-        setData(current => {
-            if (current._manualDiscount) return current;
-            return {
+        // Check if customer has a discount in the discounts prop
+        const discountObj = discounts?.find(d => d.customer_id === data.customer_id);
+        if (discountObj) {
+            setData(current => ({
                 ...current,
-                discount: discountPercent,
-            };
-        });
-    }, [data.customer_id, customers, schemes]);
+                discount: discountObj.discount,
+                _manualDiscount: false, // lock discount
+            }));
+        } else {
+            const orderCount = customer ? customer.order_count : 0;
+            const discountPercent = getDiscountForOrderCount(orderCount);
+            // Only auto-set discount if user hasn't manually changed it
+            setData(current => {
+                if (current._manualDiscount) return current;
+                return {
+                    ...current,
+                    discount: discountPercent,
+                };
+            });
+        }
+    }, [data.customer_id, customers, schemes, discounts]);
 
     useEffect(() => {
         const total = calculateTotal();
@@ -165,7 +176,7 @@ export default function Form({
             {Object.entries(errors).map(([field, error]) => (
                 <div key={field} className="text-red-500 text-sm">{error}</div>
             ))}
-
+            {/* <p>{JSON.stringify(discounts)}</p> */}
             <div>
                 <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">
                     Customer
@@ -184,13 +195,31 @@ export default function Form({
                         </option>
                     ))}
                 </select>
-                {data.customer_id && (
-                    <div className="mt-2 px-4 py-2 rounded bg-green-100 text-green-800 text-sm font-semibold flex items-center gap-2">
-                        <span role="img" aria-label="confetti">🎉</span>
-                        Congratulations! This customer has {customers.find(c => c.id === data.customer_id)?.order_count ?? 0} orders.
-                        They will get a {discountPercentValue}% discount automatically applied!
-                    </div>
-                )}
+                {data.customer_id && (() => {
+                    const discountObj = discounts?.find(d => d.customer_id === data.customer_id);
+                    if (discountObj) {
+                        return (
+                            <div className="mt-2 px-4 py-2 rounded bg-green-100 text-green-800 text-sm font-semibold flex items-center gap-2">
+                                <span role="img" aria-label="confetti">🎉</span>
+                                Special discount for Returning Customer: {discountObj.discount}% applied for this customer!
+                            </div>
+                        );
+                    }
+                    // Only show congratulation if scheme discount is nonzero
+                    const customer = customers.find(c => c.id === data.customer_id);
+                    const orderCount = customer ? customer.order_count : 0;
+                    const schemeDiscount = getDiscountForOrderCount(orderCount);
+                    if (schemeDiscount > 0) {
+                        return (
+                            <div className="mt-2 px-4 py-2 rounded bg-green-100 text-green-800 text-sm font-semibold flex items-center gap-2">
+                                <span role="img" aria-label="confetti">🎉</span>
+                                Congratulations! This customer has {orderCount} orders.
+                                They will get a {schemeDiscount}% discount automatically applied!
+                            </div>
+                        );
+                    }
+                    return null;
+                })()}
             </div>
 
             {!isUpdate && (
@@ -327,7 +356,7 @@ export default function Form({
                                     _manualDiscount: true,
                                 }));
                             }}
-                           className="inline-flex items-center rounded-md border border-transparent bg-black px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                            className="inline-flex items-center rounded-md border border-transparent bg-black px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                         >
                             Override Discount
                         </button>

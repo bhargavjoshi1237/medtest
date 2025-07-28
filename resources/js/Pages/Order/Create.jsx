@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Form from './Components/Form';
 
-export default function Create({ auth, customers, products, schemes }) {
+export default function Create({ auth, customers, products, schemes, discounts, reminders }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -18,6 +18,8 @@ export default function Create({ auth, customers, products, schemes }) {
                                 customers={customers}
                                 products={products}
                                 schemes={schemes}
+                                discounts={discounts}
+                                reminders={reminders}
                                 submitRoute={route('order.store')}
                                 method="post"
                                 onSuccess={() => {

@@ -8,13 +8,16 @@ use App\Models\Order;
 use App\Models\Customer;
 
 use App\Models\Product;
+use App\Models\Reminder;
 use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SchemeRepository;
+use App\Repositories\ReminderRepository;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\DiscountRepository;
 use Illuminate\Support\Facades\DB;
 
 
@@ -25,7 +28,9 @@ class OrderController extends Controller
         public OrderRepository $orderRepository,
         public CustomerRepository $customerRepository,
         public ProductRepository $productRepository,
-        public SchemeRepository $schemeRepository
+        public SchemeRepository $schemeRepository,
+        public DiscountRepository $discountRepository,
+        public ReminderRepository $reminderRepository
     ) {}
 
 
@@ -45,11 +50,16 @@ class OrderController extends Controller
         $customers = $this->customerRepository->withOrderCount();
         $products = $this->productRepository->getAll();
         $schemes = $this->schemeRepository->getAll();
+        $discounts = $this->discountRepository->getAll();
+        $reminders = $this->reminderRepository->getAll();
 
         return Inertia::render('Order/Create', [
             'customers' => $customers,
             'products' => $products,
             'schemes' => $schemes,
+            'discounts' => $discounts,
+            'reminders' => $reminders,
+
         ]);
     }
 
@@ -64,6 +74,8 @@ class OrderController extends Controller
             $order = $this->orderRepository->store($validated);
             $this->orderRepository->attachProducts($order, $validated);
             $this->orderRepository->decrementProductInventory($validated);
+            $this->orderRepository->removeCustomerDiscount($order->customer);
+
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Order created successfully.');
         } catch (\Exception $e) {
