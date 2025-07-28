@@ -1,13 +1,23 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import Card from './Components/Card';
+import { Head } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-const Index = ({ notifications }) => {
+const Index = ({ notifications, auth }) => {
     return (
-        <div className="max-w-3xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Notifications</h1>
-            
-            <div className="space-y-4">
+       <AuthenticatedLayout
+       
+        user={auth.user}
+            header={
+                <div className="flex items-center justify-between gap-4">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">Notifications</h2>
+                    
+                </div>
+            }
+        >
+            <div className="max-w-3xl mx-auto px-4 py-8">
+                <div className="space-y-4">
                 {(notifications.data ?? notifications).map(notification => (
                     <div 
                         key={notification.id}
@@ -48,7 +58,7 @@ const Index = ({ notifications }) => {
                     </div>
                 ))}
             </div>
-        </div>
+        </div></AuthenticatedLayout>
     );
 };
 
