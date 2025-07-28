@@ -3,8 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductApiController;
-use App\Http\Controllers\Api\OrdertController;
+use App\Http\Controllers\Api\CustomerApiController;
 use App\Http\Controllers\Api\OrderController; // Import the OrderController
+use App\Http\Controllers\CustomerController; // Import the CustomerController
 
 // Example: Get authenticated user
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -14,6 +15,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/products', [ProductApiController::class, 'index'])
     ->name('api.products.index');
 
-
-// Public route to get all orders
 Route::get('/orders', [OrderController::class, 'index']);
+
+Route::get('/customers', [CustomerApiController::class, 'index']);
+
+Route::post('/customers', [CustomerApiController::class, 'store']);

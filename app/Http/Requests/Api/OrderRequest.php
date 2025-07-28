@@ -20,8 +20,8 @@ class OrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'maxAmt' => ['nullable', 'numeric', 'gt:0'], 
-            'maxQty' => ['nullable', 'numeric', 'gt:0'], 
+            'maxamt' => ['nullable', 'numeric', 'gt:0'], 
+            'maxqty' => ['nullable', 'numeric', 'gt:0'], 
             'customer_uuid' => ['nullable', 'uuid'], 
         ];
     }

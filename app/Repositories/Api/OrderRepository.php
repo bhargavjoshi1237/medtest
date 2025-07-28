@@ -16,15 +16,15 @@ class OrderRepository extends BaseRepository
     {
         $query = $this->model->query();
 
-        if (isset($params['maxAmt']) && $params['maxAmt'] !== null) {
-            $query->where('final_amount', '<=', $params['maxAmt']);
+        if (isset($params['maxamt']) && $params['maxamt'] !== null) {
+            $query->where('final_amount', '<=', $params['maxamt']);
             $query->orderBy('final_amount', 'desc');
         }
-        if (isset($params['customer_id']) && $params['customer_id'] !== null) {
-            $query->where('customer_id', $params['customer_id']);
+        if (isset($params['customerid']) && $params['customerid'] !== null) {
+            $query->where('customer_id', $params['customerid']);
         }
-        if (isset($params['maxQty']) && $params['maxQty'] !== null) {
-            $query->limit($params['maxQty']);
+        if (isset($params['maxqty']) && $params['maxqty'] !== null) {
+            $query->limit((int)$params['maxqty']);
         }
 
         return $query->get();
