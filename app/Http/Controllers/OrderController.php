@@ -58,7 +58,6 @@ class OrderController extends BaseController
             'schemes' => $schemes,
             'discounts' => $discounts,
             'reminders' => $reminders,
-
         ]);
     }
 
@@ -140,3 +139,4 @@ class OrderController extends BaseController
         }
     }
 }
+           

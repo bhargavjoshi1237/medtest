@@ -31,4 +31,18 @@ class CustomerRepository extends BaseRepository
             })
             ->toArray();
     }
+
+    public function withOrderCount()
+    {
+        return $this->newQuery()
+            ->withCount('orders')
+            ->get()
+            ->map(function ($customer) {
+                return [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'order_count' => $customer->orders_count,
+                ];
+            });
+    }
 }
