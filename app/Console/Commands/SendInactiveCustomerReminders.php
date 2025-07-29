@@ -9,9 +9,9 @@ use App\Models\Discount;
 
 class SendInactiveCustomerReminders extends Command
 {
-  
+
     protected $signature = 'reminders:send-inactive-customer';
- 
+
     protected $description = 'Send reminders to customers who haven\'t placed orders in the last month';
 
     public function handle()
@@ -43,6 +43,5 @@ class SendInactiveCustomerReminders extends Command
     {
         Reminder::where('created_at', '<', now()->subMonth())->delete();
         Discount::where('created_at', '<', now()->subMonth())->delete();
-
     }
 }

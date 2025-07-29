@@ -202,7 +202,7 @@ export default function Form({
                         rel="noopener noreferrer"
                         title="new customer"
                     >
-                         Add
+                        Add
                     </a>
                 </div>
                 {data.customer_id && (() => {
@@ -336,9 +336,14 @@ export default function Form({
             </div>
 
             <div>
-                <label htmlFor="discount" className="block text-sm font-medium text-gray-700 mb-1">
-                    Discount (%)
-                </label>
+                <div className='flex items-center gap-2'>
+                    <label htmlFor="discount" className="block text-sm font-medium text-gray-800 mb-1">
+                        Discount (%)
+                    </label>
+                    <label htmlFor="discount" className="block text-xs font-medium text-gray-600 mb-1">
+                        (The Discount will be automatically applied based on customer order count unless overridden.)
+                    </label>
+                </div>
                 <div className="flex gap-2">
                     <input
                         id="discount"

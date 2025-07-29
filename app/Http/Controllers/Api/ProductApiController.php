@@ -19,16 +19,15 @@ class ProductApiController extends BaseController
     {
         $params = $request->validated();
         $response = $this->productRepository->getWithParams($params);
-    
-        return response()->json([   
+        return response()->json([
             'message' => 'Hello, World!',
             'params' => $params,
             'products' => $response,
         ]);
     }
-     
+
     public function store(StoreProductRequest $request)
-    {   
+    {
         $data = $request->validated();
         $product = $this->productRepository->store($data); // pass $data, not [$data]
         return response()->json([

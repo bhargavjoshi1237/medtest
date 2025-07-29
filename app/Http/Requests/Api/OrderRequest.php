@@ -16,13 +16,13 @@ class OrderRequest extends FormRequest
         return true; // Set to true if authorization is handled elsewhere or not needed here
     }
 
-   
+
     public function rules()
     {
         return [
-            'maxamt' => ['nullable', 'numeric', 'gt:0'], 
-            'maxqty' => ['nullable', 'numeric', 'gt:0'], 
-            'customerid' => ['nullable', 'uuid'], 
+            'maxamt' => ['nullable', 'numeric', 'gt:0'],
+            'maxqty' => ['nullable', 'numeric', 'gt:0'],
+            'customerid' => ['nullable', 'uuid'],
         ];
     }
 
@@ -31,5 +31,4 @@ class OrderRequest extends FormRequest
      *
      * @return array
      */
-    
 }

@@ -52,7 +52,6 @@ class OrderController extends BaseController
         $schemes = $this->schemeRepository->getAll();
         $discounts = $this->discountRepository->getAll();
         $reminders = $this->reminderRepository->getAll();
-
         return Inertia::render('Order/Create', [
             'customers' => $customers,
             'products' => $products,
@@ -117,7 +116,6 @@ class OrderController extends BaseController
     {
         DB::beginTransaction();
         try {
-
             DB::commit();
             return redirect()->route('dashboard')->with('success', 'Order updated successfully.');
         } catch (\Exception $e) {

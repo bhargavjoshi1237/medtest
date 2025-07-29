@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class NotificationController extends BaseController
 {
-    public function __construct( public NotificationRepository $notificationRepository)
-    {
-    }
-    
+    public function __construct(public NotificationRepository $notificationRepository) {}
+
     public function index()
     {
         $notifications = $this->notificationRepository->getAll(['product:id,name']);
@@ -21,25 +19,15 @@ class NotificationController extends BaseController
         ]);
     }
 
-    public function create()
-    {
-    }
+    public function create() {}
 
-    public function store(Request $request)
-    {
-    }
+    public function store(Request $request) {}
 
-    public function show(Notification $notification)
-    {
-    }
+    public function show(Notification $notification) {}
 
-    public function edit(Notification $notification)
-    {
-    }
+    public function edit(Notification $notification) {}
 
-    public function update(Request $request, Notification $notification)
-    {
-    }
+    public function update(Request $request, Notification $notification) {}
 
     public function destroy(Notification $notification)
     {

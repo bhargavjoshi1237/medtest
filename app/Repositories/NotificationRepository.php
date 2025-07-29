@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories;
 
@@ -11,4 +11,3 @@ class NotificationRepository extends BaseRepository
         parent::__construct($model);
     }
 }
-   

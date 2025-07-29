@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Api;
 
-use App\Repositories\BaseRepository; 
+use App\Repositories\BaseRepository;
 use App\Models\Order; // Import the Order model
 
 class OrderRepository extends BaseRepository
@@ -16,7 +16,7 @@ class OrderRepository extends BaseRepository
     {
         $query = $this->model->query();
 
-        // Apply customer filter first - this should be the primary filter
+
         if (!empty($params['customerid'])) {
             $query->where('customer_id', '=', $params['customerid']);
         }
@@ -25,7 +25,7 @@ class OrderRepository extends BaseRepository
             $query->where('final_amount', '<=', $params['maxamt']);
             $query->orderBy('final_amount', 'desc');
         }
-        
+
         if (!empty($params['maxqty'])) {
             $query->limit((int)$params['maxqty']);
         }

@@ -21,7 +21,7 @@ export default function Show({ auth, order }) {
                         </button>
                     </div>
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        {/* Header */}
+
                         <div className="px-6 py-5 border-b border-gray-100">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -44,7 +44,7 @@ export default function Show({ auth, order }) {
                             </div>
                         </div>
 
-                        {/* Customer Info */}
+
                         <div className="px-6 py-5 border-b border-gray-100">
                             <h2 className="text-lg font-medium text-gray-900 mb-4">Customer</h2>
                             <div className="flex items-center justify-between">
@@ -61,7 +61,7 @@ export default function Show({ auth, order }) {
                             </div>
                         </div>
 
-                        {/* Order Summary */}
+
                         <div className="px-6 py-5 border-b border-gray-100">
                             <h2 className="text-lg font-medium text-gray-900 mb-4">Summary</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -80,7 +80,7 @@ export default function Show({ auth, order }) {
                             </div>
                         </div>
 
-                        {/* Products */}
+
                         <div className="px-6 py-5">
                             <h2 className="text-lg font-medium text-gray-900 mb-4">Products</h2>
                             <div className="space-y-4">
@@ -99,7 +99,7 @@ export default function Show({ auth, order }) {
                             </div>
                         </div>
 
-                        {/* Footer */}
+
                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex   items-center">
                             <p className="text-sm text-gray-500">
                                 Last updated: {new Date(order.updated_at).toLocaleDateString('en-US', {
@@ -110,17 +110,17 @@ export default function Show({ auth, order }) {
                                     minute: '2-digit'
                                 })}
                             </p>
-                           <div className='flex gap-3 ml-auto'>
-                             <button className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
-                                Print Receipt
-                            </button>
-                             <button className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
-                                Email Receipt
-                            </button></div>
-                           </div>
+                            <div className='flex gap-3 ml-auto'>
+                                <button className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
+                                    Print Receipt
+                                </button>
+                                <button className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
+                                    Email Receipt
+                                </button></div>
                         </div>
                     </div>
                 </div>
-                     </AuthenticatedLayout>
+            </div>
+        </AuthenticatedLayout>
     );
 }

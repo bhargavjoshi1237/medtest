@@ -5,7 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Edit({ product }) {
     const handleSuccess = () => {
-      
+
     };
 
     return (
@@ -19,7 +19,7 @@ export default function Edit({ product }) {
             <Head title="Edit Product" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <Form 
+                    <Form
                         product={product}
                         submitRoute={route('product.update', product.id)}
                         method="put"

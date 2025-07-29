@@ -15,7 +15,7 @@ class UpdateCutomerRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'contact' => 'required|string|max:12|unique:customers,contact,' . $this->customer->id,
+            'contact' => 'required|string|max:12',
         ];
     }
 

@@ -18,6 +18,4 @@ class CustomerApiRequest extends FormRequest
             'contact' => 'required|string|max:50',
         ];
     }
-
-     
 }

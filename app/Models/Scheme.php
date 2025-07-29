@@ -11,7 +11,6 @@ class Scheme extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        
         'order_count',
         'discount'
     ];
@@ -24,7 +23,7 @@ class Scheme extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (empty($model->{$model->getKeyName()})) {
                 $model->{$model->getKeyName()} = Str::uuid()->toString();

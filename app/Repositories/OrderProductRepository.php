@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories;
 
@@ -10,6 +10,4 @@ class OrderProductRepository extends BaseRepository
     {
         parent::__construct($model);
     }
-
-    
 }

@@ -23,7 +23,7 @@ export default function Create({ auth, customers, products, schemes, discounts, 
                                 submitRoute={route('order.store')}
                                 method="post"
                                 onSuccess={() => {
-                                    // Optional: redirect or show success message
+
                                 }}
                             />
                         </div>

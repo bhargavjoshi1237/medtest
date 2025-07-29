@@ -4,10 +4,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function View({ customer, auth, orders }) {
     return (
-        <AuthenticatedLayout>
-            <div className="max-w-3xl mx-auto px-4 py-8">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+        <AuthenticatedLayout
+        
+        header={
+             <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,15 +16,18 @@ export default function View({ customer, auth, orders }) {
                         </div>
                         <h1 className="text-xl font-medium text-gray-900">Customer Profile</h1>
                     </div>
-                    <Link 
+                    <Link
                         href={route('customer.index')}
                         className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
                     >
                         ← All Customers
                     </Link>
                 </div>
+        }
+        >
+            <div className="max-w-3xl mx-auto px-4 py-8">
+               
 
-                {/* Customer Card */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -50,7 +53,7 @@ export default function View({ customer, auth, orders }) {
                         >
                             Delete
                         </button>
-                             <Link
+                        <Link
                             href={route('order.create')}
                             className="px-3 py-1.5 text-sm font-medium rounded border border-gray-200 hover:border-gray-300 transition-colors"
                         >
@@ -59,10 +62,9 @@ export default function View({ customer, auth, orders }) {
                     </div>
                 </div>
 
-                {/* Orders Section */}
                 <div className="space-y-3">
                     <h2 className="text-lg font-medium text-gray-900 mb-2">Orders</h2>
-                    
+
                     {orders.length > 0 ? (
                         <div className="space-y-2">
                             {orders.map(order => (
@@ -107,12 +109,11 @@ export default function View({ customer, auth, orders }) {
                     )}
                 </div>
 
-                {/* Metadata */}
                 <div className="mt-6 text-xs text-gray-500 text-center">
-                    Customer since {new Date(customer.created_at).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
+                    Customer since {new Date(customer.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
                     })}
                 </div>
             </div>

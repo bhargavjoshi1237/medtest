@@ -27,7 +27,6 @@ class Product extends Model
         'alert_quantity' => 'integer'
     ];
 
-
     public function getRouteKeyName()
     {
         return 'id';

@@ -5,11 +5,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Create() {
     const handleSuccess = () => {
-       
+
     };
 
     return (
-        <AuthenticatedLayout     
+        <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
                     Create Product
@@ -19,7 +19,7 @@ export default function Create() {
             <Head title="Create Product" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <Form 
+                    <Form
                         product={null}
                         submitRoute={route('product.store')}
                         method="post"

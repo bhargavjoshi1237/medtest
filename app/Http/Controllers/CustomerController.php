@@ -19,7 +19,7 @@ class CustomerController extends BaseController
     public function __construct(
         public CustomerRepository $customerRepository,
     ) {}
-    
+
     public function index()
     {
         return Inertia::render('Customer/Index', [
@@ -27,13 +27,11 @@ class CustomerController extends BaseController
         ]);
     }
 
-    
     public function create()
     {
         return Inertia::render('Customer/Create');
     }
 
-    
     public function store(StoreCustomerRequest $request)
     {
         DB::beginTransaction();
@@ -47,7 +45,6 @@ class CustomerController extends BaseController
         }
     }
 
-    
     public function show(Customer $customer)
     {
         $orders = $this->customerRepository->getOrders($customer->id);
@@ -57,14 +54,12 @@ class CustomerController extends BaseController
         ]);
     }
 
-
     public function edit(Customer $customer)
     {
         return Inertia::render('Customer/Edit', [
             'customer' => $customer
         ]);
     }
-
 
     public function update(UpdateCutomerRequest $request, Customer $customer)
     {
@@ -79,7 +74,6 @@ class CustomerController extends BaseController
             return $this->sendRedirectError(route('customer.index'), 'Failed to update customer.');
         }
     }
-
 
     public function destroy(Customer $customer)
     {

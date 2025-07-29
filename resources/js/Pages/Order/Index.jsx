@@ -29,18 +29,18 @@ const Index = ({ orders, auth }) => {
                         href="/order/create"
                         className="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium rounded-md shadow hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                     >
-                         Create Order
+                        Create Order
                     </a>
                 </div>
             }
         >
             <Head title="Orders" />
-            
+
             <div className="py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <div className="p-6">
-                            {/* Header Section */}
+
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                                 <div>
                                     <h1 className="text-2xl font-bold text-gray-900">Order History</h1>
@@ -75,7 +75,6 @@ const Index = ({ orders, auth }) => {
                                 </div>
                             </div>
 
-                            {/* Orders Table */}
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
@@ -145,7 +144,6 @@ const Index = ({ orders, auth }) => {
                                 </table>
                             </div>
 
-                            {/* Pagination */}
                             <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between">
                                 <div className="text-sm text-gray-500 mb-4 sm:mb-0">
                                     Showing <span className="font-medium">1</span> to <span className="font-medium">{orders.length}</span> of{' '}
