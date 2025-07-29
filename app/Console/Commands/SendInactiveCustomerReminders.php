@@ -16,7 +16,9 @@ class SendInactiveCustomerReminders extends Command
     public function __construct(
         public ReminderRepository $reminderRepo,
         public DiscountRepository $discountRepo
-    ) {}
+    ) {
+        parent::__construct();  
+    }
 
     public function handle()
     {

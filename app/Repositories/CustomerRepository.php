@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Customer;
+use Illuminate\Database\Eloquent\Builder;
 
 class CustomerRepository extends BaseRepository
 {
@@ -11,21 +12,23 @@ class CustomerRepository extends BaseRepository
         parent::__construct($model);
     }
 
-    public function withOrderCount($columns = ['*'])
+    public function getTopCustomers(int $limit = 5): array
     {
-        return $this->model->newQuery()
+        return $this->newQuery()
             ->withCount('orders')
-            ->get($columns)
+            ->withSum('orders', 'final_amount')
+            ->orderBy('orders_count', 'desc')
+            ->limit($limit)
+            ->get()
             ->map(function ($customer) {
-                $customer->order_count = $customer->orders_count;
-                unset($customer->orders_count);
-                return $customer;
-            });
-    }
-
-    public function getOrders($customerId)
-    {
-        $customer = $this->getById($customerId, ['orders']);
-        return $customer ? $customer->orders : collect();
+                return [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'contact' => $customer->contact,
+                    'total_orders' => $customer->orders_count,
+                    'total_spent' => (float) ($customer->orders_sum_final_amount ?? 0)
+                ];
+            })
+            ->toArray();
     }
 }
