@@ -45,4 +45,15 @@ class CustomerRepository extends BaseRepository
                 ];
             });
     }
+
+    /**
+     * Get all orders for a given customer ID.
+     *
+     * @param string $customerId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getOrders(string $customerId)
+    {
+        return $this->model->findOrFail($customerId)->orders()->with(['products'])->get();
+    }
 }

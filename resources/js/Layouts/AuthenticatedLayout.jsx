@@ -50,7 +50,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </NavLink>
                                 <NavLink
                                     href={route('order.index')}
-                                    active={route().current('order.*')}
+                                    active={route().current('order.index') || route().current('order.show') || route().current('order.edit')}
                                 >
                                     Orders
                                 </NavLink>
@@ -185,6 +185,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <ResponsiveNavLink href={route('profile.edit')}>
                                 Profile
                             </ResponsiveNavLink>
+                            
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}

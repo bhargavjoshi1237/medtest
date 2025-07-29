@@ -205,7 +205,7 @@ export default function Form({
                         id="customer"
                         value={customerValue}
                         onChange={e => setData('customer_id', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black disabled:opacity-50"
+                        className="w-[86%] rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black disabled:opacity-50"
                         disabled={isUpdate}
                     >
                         <option value="">Select a customer</option>
@@ -221,7 +221,7 @@ export default function Form({
                         rel="noopener noreferrer"
                         title="new customer"
                     >
-                        Add
+                        Add New Customer
                     </a>
                 </div>
                 {data.customer_id && (() => {

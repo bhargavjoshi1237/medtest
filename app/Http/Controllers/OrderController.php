@@ -74,10 +74,10 @@ class OrderController extends BaseController
             $this->orderRepository->decrementProductInventory($validated);
             $this->orderRepository->removeCustomerDiscount($order->customer);
             DB::commit();
-            return redirect()->route('dashboard')->with('success', 'Order created successfully.');
+            return $this->sendRedirectResponse(route('dashboard'), 'Order created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create order: ' . $e->getMessage());
+            return $this->sendRedirectError(route('dashboard'), 'Failed to create order: ' . $e->getMessage());
         }
     }
 
@@ -116,10 +116,10 @@ class OrderController extends BaseController
         DB::beginTransaction();
         try {
             DB::commit();
-            return redirect()->route('dashboard')->with('success', 'Order updated successfully.');
+            return $this->sendRedirectResponse(route('dashboard'), 'Order updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update order: ' . $e->getMessage());
+            return $this->sendRedirectError(route('dashboard'), 'Failed to update order: ' . $e->getMessage());
         }
     }
 
@@ -132,11 +132,11 @@ class OrderController extends BaseController
         try {
             $this->orderRepository->destroy($order);
             DB::commit();
-            return redirect()->route('dashboard')->with('success', 'Order deleted successfully.');
+            return $this->sendRedirectResponse(route('dashboard'), 'Order deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to delete order: ' . $e->getMessage());
+            return $this->sendRedirectError(route('dashboard'), 'Failed to delete order: ' . $e->getMessage());
         }
     }
 }
-           
+

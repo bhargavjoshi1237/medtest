@@ -40,10 +40,10 @@ class ProductController extends BaseController
         try {
             $product = $this->productRepository->store($request->validated());
             DB::commit();
-            return redirect()->route('product.index')->with('success', 'Product created successfully!');
+            return $this->sendRedirectResponse(route('product.index'), 'Product created successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create product: ' . $e->getMessage());
+            return $this->sendRedirectError(route('product.index'), 'Failed to create product: ' . $e->getMessage());
         }
     }
 
@@ -70,10 +70,10 @@ class ProductController extends BaseController
         try {
             $updatedProduct = $this->productRepository->update($product->id, $request->validated());
             DB::commit();
-            return redirect()->route('product.index')->with('success', 'Product updated successfully!');
+            return $this->sendRedirectResponse(route('product.index'), 'Product updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update product: ' . $e->getMessage());
+            return $this->sendRedirectError(route('product.index'), 'Failed to update product: ' . $e->getMessage());
         }
     }
 
@@ -84,10 +84,10 @@ class ProductController extends BaseController
         try {
             $this->productRepository->destroy($product->id);
             DB::commit();
-            return redirect()->route('product.index')->with('success', 'Product deleted successfully!');
+            return $this->sendRedirectResponse(route('product.index'), 'Product deleted successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to delete product: ' . $e->getMessage());
+            return $this->sendRedirectError(route('product.index'), 'Failed to delete product: ' . $e->getMessage());
         }
     }
 }
