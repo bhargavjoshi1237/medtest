@@ -31,13 +31,31 @@ export default function Form({
     const [selectedProduct, setSelectedProduct] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [manualDiscount, setManualDiscount] = useState(false);
+    const [quantityError, setQuantityError] = useState('');
+
+    const getAvailableQuantity = (productId) => {
+        const product = products.find(p => p.id == productId);
+        const inCart = data.products.find(p => p.id == productId);
+        if (!product) return 0;
+        return product.quantity - (inCart ? inCart.quantity : 0);
+    };
 
     const addProduct = () => {
         if (!selectedProduct || quantity < 1) return;
         const product = products.find(p => p.id == selectedProduct);
         const existingProductIndex = data.products.findIndex(p => p.id == selectedProduct);
+        const availableQty = getAvailableQuantity(selectedProduct);
+        if (quantity > availableQty) {
+            setQuantityError(`Cannot add more than available quantity (${availableQty})`);
+            return;
+        }
+        setQuantityError('');
         if (existingProductIndex !== -1) {
             const updatedProducts = [...data.products];
+            if (updatedProducts[existingProductIndex].quantity + quantity > product.quantity) {
+                setQuantityError(`Cannot add more than available quantity (${product.quantity})`);
+                return;
+            }
             updatedProducts[existingProductIndex].quantity += quantity;
             setData('products', updatedProducts);
         } else {
@@ -240,31 +258,47 @@ export default function Form({
                     <div className="flex gap-2">
                         <select
                             value={selectedProduct}
-                            onChange={(e) => setSelectedProduct(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedProduct(e.target.value);
+                                setQuantityError('');
+                            }}
                             className="flex-1 rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black"
                         >
                             <option value="">Select a product</option>
                             {products.map((product) => (
                                 <option key={product.id} value={product.id}>
-                                    {product.name} - ${product.price}
+                                    {product.name} - ${product.price} (Stock: {product.quantity - (data.products.find(p => p.id == product.id)?.quantity || 0)})
                                 </option>
                             ))}
                         </select>
                         <input
                             type="number"
                             min="1"
+                            max={selectedProduct ? getAvailableQuantity(selectedProduct) : ''}
                             value={quantity}
-                            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                            onChange={(e) => {
+                                setQuantity(parseInt(e.target.value) || 1);
+                                setQuantityError('');
+                            }}
                             className="w-20 rounded-md border border-gray-300 py-2 px-3 text-sm focus:border-black focus:outline-none focus:ring-black"
+                            disabled={!selectedProduct}
                         />
                         <button
                             type="button"
                             onClick={addProduct}
                             className="inline-flex items-center rounded-md border border-transparent bg-black px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                            disabled={
+                                !selectedProduct ||
+                                quantity < 1 ||
+                                (selectedProduct && quantity > getAvailableQuantity(selectedProduct))
+                            }
                         >
                             Add
                         </button>
                     </div>
+                    {quantityError && (
+                        <div className="text-red-500 text-xs mt-1">{quantityError}</div>
+                    )}
                 </div>
             )}
 

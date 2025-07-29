@@ -3,16 +3,20 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Reminder;
 use App\Models\Customer;
-use App\Models\Discount;
+use App\Repositories\ReminderRepository;
+use App\Repositories\DiscountRepository;
 
 class SendInactiveCustomerReminders extends Command
 {
-
     protected $signature = 'reminders:send-inactive-customer';
 
     protected $description = 'Send reminders to customers who haven\'t placed orders in the last month';
+
+    public function __construct(
+        public ReminderRepository $reminderRepo,
+        public DiscountRepository $discountRepo
+    ) {}
 
     public function handle()
     {
@@ -23,14 +27,13 @@ class SendInactiveCustomerReminders extends Command
         })->get();
 
         foreach ($inactiveCustomers as $customer) {
-
-            $alreadyReminded = Reminder::where('customer_id', $customer->id)->exists();
+            $alreadyReminded = $this->reminderRepo->exists('customer_id', $customer->id);
             if (!$alreadyReminded) {
-                Reminder::create([
+                $this->reminderRepo->store([
                     'customer_id' => $customer->id,
                     'info' => 'Inactive for over a month',
                 ]);
-                Discount::create([
+                $this->discountRepo->store([
                     'customer_id' => $customer->id,
                     'discount' => 10,
                     'expires' => now()->addMonth(),
@@ -41,7 +44,8 @@ class SendInactiveCustomerReminders extends Command
 
     protected function deleteOldReminders()
     {
-        Reminder::where('created_at', '<', now()->subMonth())->delete();
-        Discount::where('created_at', '<', now()->subMonth())->delete();
+        $this->reminderRepo->newQuery()->where('created_at', '<', now()->subMonth())->delete();
+        $this->discountRepo->newQuery()->where('created_at', '<', now()->subMonth())->delete();
     }
 }
+        
