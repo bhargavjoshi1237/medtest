@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -26,50 +27,50 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
    public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                // UUID field (Auto-generated, so we don't need to make it editable)
+                
                 TextInput::make('id')
                     ->label('Order ID')
                     ->disabled()
                     ->default(fn () => (string) Str::uuid()),
 
-                // Total Payable Field
+              
                 TextInput::make('total_payable')
                     ->label('Total Payable')
                     ->required()
-                    ->type('number') // Using 'number' type for numeric input
+                    ->type('number') 
                     ->step(0.01),
 
-                // Discount Field
+            
                 TextInput::make('discount')
                     ->label('Discount')
                     ->required()
                     ->type('number')
                     ->step(1),
 
-                // Final Amount Field
+              
                 TextInput::make('final_amount')
                     ->label('Final Amount')
                     ->required()
-                    ->type('number') // Number input for final amount
-                    ->step(0.01), // Decimal precision
+                    ->type('number') 
+                    ->step(0.01), 
                     
 
-                // Customer Field (BelongsTo relationship)
+               
                 BelongsToSelect::make('customer_id')
                     ->label('Customer')
-                    ->relationship('customer', 'name') // Assuming 'name' is the column you want to display
+                    ->relationship('customer', 'name') 
                     ->required(),
 
-                // Created By Field (BelongsTo relationship)
+                
                 BelongsToSelect::make('created_by')
                     ->label('Created By')
-                    ->relationship('createdBy', 'name') // Assuming 'name' is the column you want to display
+                    ->relationship('createdBy', 'name') 
                     ->required(),
             ]);
     }
@@ -88,7 +89,7 @@ class OrderResource extends Resource
                     ->sortable(),
                 TextColumn::make('total_payable')
                     ->label('Total Payable')
-                    ->money('USD') // Assuming USD, adjust as needed
+                    ->money('USD')
                     ->sortable(),
                 TextColumn::make('discount')
                     ->label('Discount')
@@ -96,7 +97,7 @@ class OrderResource extends Resource
                     ->sortable(),
                 TextColumn::make('final_amount')
                     ->label('Final Amount')
-                    ->money('USD') // Assuming USD, adjust as needed
+                    ->money('USD') 
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
@@ -114,11 +115,11 @@ class OrderResource extends Resource
             ])
             ->actions([
                 EditAction::make(),
-                ViewAction::make(), // Add View action to link to Show.jsx
+                ViewAction::make(), 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
