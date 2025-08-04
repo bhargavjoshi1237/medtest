@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CustomerResource\Pages;
 
 use App\Filament\Resources\CustomerResource;
 use App\Filament\Resources\CustomerResource\RelationManagers\OrdersRelationManager;
+use App\Filament\Resources\CustomerResource\RelationManagers\RetainersRelationManager;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
@@ -14,6 +15,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Actions\Action;
 use App\Models\Scheme;
 use App\Models\Userspecificdiscounts;
+use App\Models\Product;
+use App\Models\Retainer;
 
 class ViewCustomer extends ViewRecord
 {
@@ -53,6 +56,52 @@ class ViewCustomer extends ViewRecord
                 ->modalSubmitActionLabel('Save Discount')
                 ->color('primary')
                 ->icon('heroicon-o-percent-badge'),
+            Action::make('Add Retainer')
+                ->form([
+                    \Filament\Forms\Components\Select::make('product_id')
+                        ->label('Product')
+                        ->options(fn () => Product::pluck('name', 'id'))
+                        ->searchable()
+                        ->required(),
+                    \Filament\Forms\Components\TextInput::make('quantity')
+                        ->label('Quantity')
+                        ->numeric()
+                        ->minValue(1)
+                        ->required(),
+                ])
+                ->action(function (array $data, $record) {
+                    $product = Product::find($data['product_id']);
+                    if (!$product) {
+                        \Filament\Notifications\Notification::make()
+                            ->title('Product not found')
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+                    if ($product->quantity < $data['quantity']) {
+                        \Filament\Notifications\Notification::make()
+                            ->title('Insufficient stock')
+                            ->body("Requested quantity ({$data['quantity']}) exceeds available stock ({$product->quantity}).")
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+                    Retainer::create([
+                        'customer_id' => $record->id,
+                        'product_id' => $product->id,
+                        'quantity' => $data['quantity'],
+                    ]);
+                    $product->quantity -= $data['quantity'];
+                    $product->save();
+                    \Filament\Notifications\Notification::make()
+                        ->title('Retainer Added')
+                        ->body("Retainer for {$product->name} ({$data['quantity']}) added for {$record->name}.")
+                        ->success()
+                        ->send();
+                })
+                ->modalHeading('Add Retainer for Customer')
+                ->modalSubmitActionLabel('Add Retainer')
+                ->icon('heroicon-o-archive-box'),
         ];
     }
 
@@ -94,6 +143,7 @@ class ViewCustomer extends ViewRecord
     {
         return [
             OrdersRelationManager::class,
+            RetainersRelationManager::class,
         ];
     }
 }

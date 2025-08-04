@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
+            Schema::dropIfExists('notifications');
             $table->uuid('id')->primary();
-            $table->uuid('product_id');
-            $table->string('title');
-            $table->text('description');
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
-
-            $table->foreignUuid('product-id')->references('id')->on('products');
         });
     }
 

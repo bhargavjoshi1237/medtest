@@ -2,22 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids; // Import the trait
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Order extends Model
 {
-    protected $keyType = 'string';
-    public $incrementing = false;
+    use HasFactory, HasUuids; // Use the HasUuids trait
 
     protected $fillable = [
         'customer_id',
-        'created_by',
         'total_payable',
         'discount',
-        'final_amount'
+        'final_amount',
+        'created_by',
     ];
 
     protected $casts = [

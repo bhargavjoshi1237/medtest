@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Notification extends Model
@@ -12,13 +11,15 @@ class Notification extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'product_id',
-        'title',
-        'description'
+        'type',
+        'notifiable_type',
+        'notifiable_id',
+        'data',
+        'read_at',
     ];
 
     protected $casts = [
-        'is_read' => 'boolean'
+        'data' => 'array',
     ];
 
     protected static function boot()
@@ -31,9 +32,6 @@ class Notification extends Model
             }
         });
     }
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class, 'product_id');
-    }
 }
+
+       

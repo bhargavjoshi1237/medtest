@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +11,8 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasUuids;
+    use HasFactory, HasUuids;
+
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -19,11 +21,12 @@ class Product extends Model
         'description',
         'price',
         'quantity',
+        'expiry',
         'alert_quantity',
-        'expiry'
     ];
 
     protected $casts = [
+        'expiry' => 'date',
         'price' => 'decimal:2',
         'quantity' => 'integer',
         'alert_quantity' => 'integer'
@@ -55,5 +58,10 @@ class Product extends Model
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function retainers()
+    {
+        return $this->hasMany(\App\Models\Retainer::class);
     }
 }

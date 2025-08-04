@@ -11,6 +11,11 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn; 
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class NotificationResource extends Resource
@@ -23,12 +28,20 @@ class NotificationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Forms\Components\TextInput::make('notifiable_type')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('notifiable_id')
+                    ->required(),
+                Forms\Components\Textarea::make('data')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\DateTimePicker::make('read_at')
+                    ->label('Read At')
+                    ->nullable(),
             ]);
     }
 
@@ -36,18 +49,21 @@ class NotificationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                 TextColumn::make('type')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
+                 TextColumn::make('notifiable_type')
                     ->searchable()
-                    ->limit(50) // Truncate long messages
-                    ->tooltip(fn (Notification $record): string => $record->description), // Show full description on hover
-                Tables\Columns\TextColumn::make('created_at')
+                    ->sortable(),
+                 TextColumn::make('read_at')
+                    ->dateTime()
+                    ->sortable(),
+                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])

@@ -83,6 +83,7 @@ class CustomerResource extends Resource
     {
         return [
             RelationManagers\OrdersRelationManager::class,
+            RelationManagers\RetainersRelationManager::class,
         ];
     }
 

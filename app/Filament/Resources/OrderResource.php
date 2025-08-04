@@ -84,7 +84,6 @@ class OrderResource extends Resource
                         $finalAmount = $totalPayable - ($totalPayable * $discount / 100);
                         $set('final_amount', round($finalAmount, 2));
                     }),
-
                 TextInput::make('final_amount')
                     ->label('Final Amount')
                     ->required()
@@ -92,16 +91,18 @@ class OrderResource extends Resource
                     ->step(0.01)
                     ->disabled()
                     ->dehydrated(),
-
                 Hidden::make('created_by')
                     ->default(auth()->id()),
-
                 Repeater::make('products')
                     ->label('Products')
                     ->schema([
                         Select::make('id')
                             ->label('Product')
-                            ->options(Product::all()->pluck('name', 'id'))
+                            ->options(Product::all()->mapWithKeys(function ($product) {
+                                return [
+                                    $product->id => $product->name . ' - $' . number_format($product->price, 2). '   (' . $product->quantity . ')',
+                                ];
+                            }))
                             ->searchable()
                             ->required()
                             ->reactive(),
@@ -170,6 +171,7 @@ class OrderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
@@ -201,4 +203,3 @@ class OrderResource extends Resource
     ];
 }
 }
-                 

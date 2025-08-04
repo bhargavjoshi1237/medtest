@@ -19,6 +19,10 @@ class ViewOrder extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\Action::make('print')
+                ->icon('heroicon-o-printer')
+                ->label('Print Order'),
+                // ->url(fn() => route('order.print', ['order' => $this->record->id])),
         ];
     }
 
