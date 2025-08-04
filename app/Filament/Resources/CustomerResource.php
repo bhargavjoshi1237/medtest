@@ -8,9 +8,10 @@ use App\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -24,10 +25,10 @@ class CustomerResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('contact')
+                TextInput::make('contact')
                     ->tel()
                     ->required()
                     ->maxLength(255),
@@ -38,15 +39,27 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('contact')
+                TextColumn::make('contact')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('userSpecificDiscount.discount')
+                    ->label('Fixed Discount')
+                    ->formatStateUsing(fn($state) => $state ? $state . '%' : 'No discount')
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('last_purchase_date')
+                    ->label('Last Purchase Date')
+                    ->getStateUsing(function ($record) {
+                        $lastOrder = $record->orders()->latest('created_at')->first();
+                        return $lastOrder ? $lastOrder->created_at->format('Y-m-d H:i') : 'No purchases';
+                    })
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -69,7 +82,7 @@ class CustomerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\OrdersRelationManager::class,
         ];
     }
 

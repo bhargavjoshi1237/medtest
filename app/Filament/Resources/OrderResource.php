@@ -10,18 +10,27 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Models\Product;
+use App\Models\Scheme;
+use App\Models\Customer;
+use App\Models\Userspecificdiscounts; 
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction; 
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Components\NumericInput;
 use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Placeholder; 
+use Filament\Forms\Components\Hidden;
 use Illuminate\Support\Str;
+use App\Filament\Resources\OrderResource\Widgets\OrderProducts;
 
 class OrderResource extends Resource
 {
@@ -33,45 +42,94 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                
+                Select::make('customer_id')
+                    ->label('Customer')
+                    ->relationship('customer', 'name')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $customerDiscount = Userspecificdiscounts::where('customer_id', $state)->first();
+                        $discount = $customerDiscount ? $customerDiscount->discount : 0;
+                        $set('discount', $discount);
+                        $totalPayable = (float) ($get('total_payable') ?? 0);
+                        $finalAmount = $totalPayable - ($totalPayable * $discount / 100);
+                        $set('final_amount', round($finalAmount, 2));
+                    }),
+                    
                 TextInput::make('id')
                     ->label('Order ID')
                     ->disabled()
-                    ->default(fn () => (string) Str::uuid()),
+                    ->default(fn () => (string) Str::uuid())->hidden(),
 
-              
                 TextInput::make('total_payable')
                     ->label('Total Payable')
-                    ->required()
-                    ->type('number') 
-                    ->step(0.01),
+                    ->type('number')
+                    ->step(0.01)
+                    ->disabled()
+                    ->dehydrated(),
 
-            
+                
+
                 TextInput::make('discount')
                     ->label('Discount')
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->step(0.01)
                     ->required()
-                    ->type('number')
-                    ->step(1),
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $totalPayable = (float) ($get('total_payable') ?? 0);
+                        $discount = (float) ($state ?? 0);
+                        $finalAmount = $totalPayable - ($totalPayable * $discount / 100);
+                        $set('final_amount', round($finalAmount, 2));
+                    }),
 
-              
                 TextInput::make('final_amount')
                     ->label('Final Amount')
                     ->required()
                     ->type('number') 
-                    ->step(0.01), 
-                    
+                    ->step(0.01)
+                    ->disabled()
+                    ->dehydrated(),
 
-               
-                BelongsToSelect::make('customer_id')
-                    ->label('Customer')
-                    ->relationship('customer', 'name') 
-                    ->required(),
+                Hidden::make('created_by')
+                    ->default(auth()->id()),
 
-                
-                BelongsToSelect::make('created_by')
-                    ->label('Created By')
-                    ->relationship('createdBy', 'name') 
-                    ->required(),
+                Repeater::make('products')
+                    ->label('Products')
+                    ->schema([
+                        Select::make('id')
+                            ->label('Product')
+                            ->options(Product::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required()
+                            ->reactive(),
+                        TextInput::make('quantity')
+                            ->label('Quantity')
+                            ->type('number')
+                            ->minValue(1)
+                            ->required()
+                            ->reactive(),
+                    ])
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $total = 0;
+                        foreach ($state as $item) {
+                            $product = Product::find($item['id'] ?? null);
+                            $qty = (int) ($item['quantity'] ?? 0);
+                            if ($product && $qty > 0) {
+                                $total += $product->price * $qty;
+                            }
+                        }
+                        $set('total_payable', $total);
+                        
+                        // Calculate final amount with discount
+                        $discount = (float) ($get('discount') ?? 0);
+                        $finalAmount = $total - ($total * $discount / 100);
+                        $set('final_amount', round($finalAmount, 2));
+                    }),
             ]);
     }
 
@@ -79,14 +137,16 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('Order ID')
-                    ->searchable()
-                    ->formatStateUsing(fn (string $state): string => Str::limit($state, 8, '')),
+                
                 TextColumn::make('customer.name')
                     ->label('Customer')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('products')
+                    ->label('Products')
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->products->pluck('name')->join(', ');
+                    })->toggleable(),
                 TextColumn::make('total_payable')
                     ->label('Total Payable')
                     ->money('USD')
@@ -132,11 +192,13 @@ class OrderResource extends Resource
     }
 
     public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
-        ];
-    }
+{
+    return [
+        'index' => Pages\ListOrders::route('/'),
+        'create' => Pages\CreateOrder::route('/create'),
+        'view' => Pages\ViewOrder::route('/{record}'), // Add this line
+        'edit' => Pages\EditOrder::route('/{record}/edit'),
+    ];
 }
+}
+                 

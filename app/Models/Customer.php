@@ -31,4 +31,9 @@ class Customer extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function userSpecificDiscount()
+    {
+        return $this->hasOne(Userspecificdiscounts::class, 'customer_id');
+    }
 }
